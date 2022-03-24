@@ -39,10 +39,9 @@ router
     }
   })
   .patch('/:todoId', async (req, res) => {
-    console.log(req.params.todoId)
     try {
       const { data } = await jsonPlaceholderTodos.patch(
-        req.params.todoId,
+        `/${req.params.todoId}`,
         { ...req.body },
         {
           'Content-type': 'application/json; charset=UTF-8'
@@ -56,7 +55,6 @@ router
   .delete('/:todoId', async (req, res) => {
     try {
       const { data } = await jsonPlaceholderTodos.delete(req.params.todoId)
-      console.log(data)
       res.send(data)
     } catch (e) {
       res.send(e)
