@@ -1,13 +1,58 @@
-import React from 'react'
+import React, { useState, useRef } from 'react'
 
-const TodoItem = ({ id, title, completed, removeTodo, swapCompleted }) => {
-  console.log(title, completed)
+const TodoItem = ({
+  id,
+  title,
+  completed,
+  handleRemoveTodo,
+  swapCompleted,
+  editTodoTitle,
+  highlightedRow
+}) => {
+  const [isEditing, setIsEditing] = useState(false)
+  const [newTitle, setNewTitle] = useState(title)
+  const inputEl = useRef(null)
+
+  const beginEditTodo = () => {
+    setIsEditing(!isEditing)
+    inputEl.current.focus()
+  }
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault()
+    editTodoTitle(id, newTitle)
+  }
   return (
-    <div>
-      <div className="flex justify-between items-center m-1">
-        <input type="checkbox" onChange={() => swapCompleted(title)} checked={completed}/>
-        <div className={`mr-auto ml-4 line-through ${completed ? "line-through" : "no-underline"}`}>{title}</div>
-        <button className="mx-2 text-cyan-600 opacity-50">
+    <div className={`${highlightedRow ? 'bg-cyan-600/10' : 'bg-white'} p-1`}>
+      <div className="flex justify-between items-center">
+        <input
+          type="checkbox"
+          onChange={() => swapCompleted(id, completed)}
+          checked={completed}
+        />
+        <form
+          onSubmit={handleFormSubmit}
+          className={`mr-auto ml-4 w-full border ${!isEditing && 'hidden'}`}
+        >
+          <input
+            type="text"
+            className="w-full"
+            ref={inputEl}
+            value={newTitle}
+            onChange={(e) => setNewTitle(e.target.value)}
+          />
+        </form>
+        <div
+          className={`mr-auto ml-4 ${
+            completed ? 'line-through' : 'no-underline'
+          } ${isEditing && 'hidden'}`}
+        >
+          {title}
+        </div>
+        <button
+          onClick={() => beginEditTodo()}
+          className="mx-2 text-cyan-600 opacity-50"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5"
@@ -17,7 +62,10 @@ const TodoItem = ({ id, title, completed, removeTodo, swapCompleted }) => {
             <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
           </svg>
         </button>
-        <button onClick={() => removeTodo(title)} className="text-cyan-600 opacity-50">
+        <button
+          onClick={() => handleRemoveTodo(id)}
+          className="text-cyan-600 opacity-50"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5"
